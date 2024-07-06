@@ -25,7 +25,10 @@
     setup();
   }
 
-  function setup() {
+  function setup() 
+    volumeController.setMuted(false
+    volumeController.adjustVolume();
+    
     new MutationObserver((mutationRecord, observer) => {
       if (enabled === false) return;
       let currentArtist = document.getElementById("qpSongArtist").textContent;
