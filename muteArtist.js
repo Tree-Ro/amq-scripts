@@ -25,10 +25,10 @@
     setup();
   }
 
-  function setup() 
+  function setup() {
     volumeController.setMuted(false);
     volumeController.adjustVolume();
-    
+
     new MutationObserver((mutationRecord, observer) => {
       if (enabled === false) return;
       let currentArtist = document.getElementById("qpSongArtist").textContent;
@@ -42,6 +42,8 @@
         currentArtist = document.getElementById("qpSongArtist").textContent;
 
         if (getMutedArtistList().includes(currentArtist)) {
+          console.log(currentArtist, getMutedArtistList().includes(currentArtist), getMutedArtistList())
+
           volumeController.setMuted(true);
           volumeController.adjustVolume();
         }
@@ -57,13 +59,13 @@
       const currentList = getMutedArtistList();
 
       if (currentList.includes(artist))
-        return `${artist} already exists in the list of muted artists`;
+        return `"${artist}" already exists in the list of muted artists`;
 
       currentList.push(artist);
 
       localStorage.setItem("mutedArtistList", JSON.stringify(currentList));
 
-      return `${artist} added to list of muted artists`;
+      return `"${artist}" added to list of muted artists`;
     }
 
     function removeMutedArtist(artist) {
