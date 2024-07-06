@@ -26,7 +26,7 @@
   }
 
   function setup() 
-    volumeController.setMuted(false)
+    volumeController.setMuted(false);
     volumeController.adjustVolume();
     
     new MutationObserver((mutationRecord, observer) => {
