@@ -15,14 +15,13 @@
   - Removes a specific artist from the autoMute list.
 
 - **/AMtoggle <Option>**
-  - Toggles the selected option.
-#### Current Options and Defaults
-
-- **scriptEnabled**: `true` (Enables or disables all functionalities)
-- **muteOnSong**: `true` (Mutes song if its name matches a muted song)
-- **muteOnArtist**: `true` (Mutes song if its artist matches a muted artist)
-- **muteOnExactMatch**: `false` (Mutes song if both name and artist match)
-- **quickAddSongs**: `false` (Auto Adds/Removes the current song from the song list when pressing "thumbs up" and "thumbs down" respectively)
+  - Toggles the selected `option`.
+- **Options & Defaults**
+  - **scriptEnabled**: `true` (Enables or disables all functionalities)
+  - **muteOnSong**: `true` (Mutes song if its name matches a muted song)
+  - **muteOnArtist**: `true` (Mutes song if its artist matches a muted artist)
+  - **muteOnExactMatch**: `false` (Mutes song if both name and artist match)
+  - **quickAddSongs**: `false` (Auto Adds/Removes the current song from the song list when pressing "thumbs up" and "thumbs down" respectively)
 
 
 - **/AMinfo <Info To Show>**
