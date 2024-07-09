@@ -1,60 +1,43 @@
-# Commands Documentation for AMQ Extension
+## Commands Documentation for AMQ script
 
-This document outlines the available commands provided by the AMQ extension, along with their descriptions and usage.
+### Commands
 
-## Commands
+- **/AMaddSong**
+  - Adds the current song to the muted songs list.
 
-### /AMaddSong
-Adds the current song to the list of muted songs.
+- **/AMremoveSong**
+  - Removes the current song from the muted songs list.
 
-### /AMremoveSong
-Removes the current song from the list of muted songs.
+- **/AMaddArtist <Artist Name>**
+  - Adds a specific artist to the autoMute list.
 
-### /AMaddArtist <Artist Name>
-Adds a specific artist to the list of artists to autoMute.
+- **/AMremoveArtist <Artist Name>**
+  - Removes a specific artist from the autoMute list.
 
-### /AMremoveArtist <Artist Name> 
-Removes a specific artist from the list of artists to autoMute.
+- **/AMtoggle <Option>**
+  - Toggles the selected option. See `/AMinfo options` for available options.
 
-### /AMtoggle <Option>
-Toggles the selected option. See `/AMinfo options` for which options that are available.
+- **/AMinfo <Info To Show>**
+  - Displays stored information:
+    - `songs`: Current list of muted songs.
+    - `artists`: Current list of muted artists.
+    - `options`: Current status of all script options.
 
-### AMinfo <Info To Show>
-Displays one of three options that the script stores locally: `["songs", "artists", "options"]`.
-'songs' refers to the current list of muted songs.
-'artists' refers to the current list of muted artists.
-'options' returns all the options that are available and their current status. 
+### Usage Examples
 
-## Usage Examples
+- `/AMaddArtist TK from Ling Tosite Sigure`
+  - Adds "TK from Ling Tosite Sigure" to autoMute artists.
 
-- Example: `/AMaddArtist TK from Ling Tosite Sigure`
-  - Adds the artist "TK from Ling Tosite Sigure" to the list of artists to autoMute.
-  - Note that the artist name is case-sensitive, so it's recommended to copy and paste the text from the "Song Info" box.
+- `/AMremoveArtist TK from Ling Tosite Sigure`
+  - Removes "TK from Ling Tosite Sigure" from autoMute artists.
 
-- Example: `/AMremoveArtist TK from Ling Tosite Sigure`
-  - Removes the artist "TK from Ling Tosite Sigure" from the list of artists to autoMute.
-  - Note that the artist name is case-sensitive, so it's recommended to copy and paste the text from the "Song Info" box.
+- `/AMtoggle scriptEnabled`
+  - Toggles the `scriptEnabled` option.
 
+#### Current Options and Defaults
 
-
-### ex. /AMtoggle scriptEnabled
-Toggle various options within the extension. Use `/AMinfo options` to see a list of available options that can be toggled.
-
-#### Current Options and Defaults:
-- **scriptEnabled**: `true`
-  - Enables or disables all functionalities of the script.
-
-- **muteOnSong**: `true`
-  - Automatically mutes the song only if its name matches a muted song (case sensitive).
-
-- **muteOnArtist**: `true`
-  - Automatically mutes the song only if its artist matches a muted artist (case sensitive).
-
-- **muteOnExactMatch**: `false`
-  - Mutes the song only if both the song name and artist match a muted entry/song (case sensitive).
-
-- **quickAddSongs**: `false`
-  - Enhances functionality of the "thumbs up" and "thumbs down" buttons in the info panel. Automatically runs `/AMaddSong` for thumbs up and `/AMremoveSong` for thumbs down.
-  - Do note that according to the announcements section in the Discord it is possible that there will be new functionality added to the thumbs buttons so I dont know how that will change how the script works.
-
-- ex. **/AMinfo options**: Use this command to display stored data related to songs, artists, or options.
+- **scriptEnabled**: `true` (Enables or disables all functionalities)
+- **muteOnSong**: `true` (Mutes song if its name matches a muted song)
+- **muteOnArtist**: `true` (Mutes song if its artist matches a muted artist)
+- **muteOnExactMatch**: `false` (Mutes song if both name and artist match)
+- **quickAddSongs**: `false` (Enhances "thumbs up" and "thumbs down" button functionality)
