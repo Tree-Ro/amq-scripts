@@ -239,7 +239,6 @@
     const options = getStoredData().options;
 
     writeToChat('Options:');
-    console.log(options);
     for (let option in options) {
       gameChat.systemMessage(`${option}: ${options[option]}`);
     }
