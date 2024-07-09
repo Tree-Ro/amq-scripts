@@ -40,3 +40,5 @@
 
 - `/AMtoggle scriptEnabled`
   - Toggles the `scriptEnabled` option.
+
+Worth noting is that any changes you make to the options/adding artists and so on only take effect after a Change from Result Phase -> Guessing phase has taken place or vice versa. 
