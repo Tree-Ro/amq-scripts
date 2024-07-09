@@ -27,10 +27,10 @@ Displays one of three options that the script stores locally: `["songs", "artist
 
 ## Usage Examples
 - ex. **/AMaddArtist TK from Ling Tosite Sigure** 
-Note that the artist name is case sensitive so I would recommend copy pasting the text that is in the "Song Info" box. 
+- Note that the artist name is case sensitive so I would recommend copy pasting the text that is in the "Song Info" box. 
 
 - ex. **/AMremoveArtist TK from Ling Tosite Sigure**
-Note that the artist name is case sensitive so I would recommend copy pasting the text that is in the "Song Info" box. 
+- Note that the artist name is case sensitive so I would recommend copy pasting the text that is in the "Song Info" box. 
 
 
 ### ex. /AMtoggle scriptEnabled
