@@ -1,4 +1,5 @@
 ## Commands Documentation for AMQ script
+This script allows you to add Songs & Artists locally to then automatically be muted during the result phase next time they appear. 
 
 ### Commands
 
