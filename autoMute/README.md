@@ -26,11 +26,15 @@ Displays one of three options that the script stores locally: `["songs", "artist
 'options' returns all the options that are available and their current status. 
 
 ## Usage Examples
-- ex. **/AMaddArtist TK from Ling Tosite Sigure** 
-- Note that the artist name is case sensitive so I would recommend copy pasting the text that is in the "Song Info" box. 
 
-- ex. **/AMremoveArtist TK from Ling Tosite Sigure**
-- Note that the artist name is case sensitive so I would recommend copy pasting the text that is in the "Song Info" box. 
+- Example: `/AMaddArtist TK from Ling Tosite Sigure`
+  - Adds the artist "TK from Ling Tosite Sigure" to the list of artists to autoMute.
+  - Note that the artist name is case-sensitive, so it's recommended to copy and paste the text from the "Song Info" box.
+
+- Example: `/AMremoveArtist TK from Ling Tosite Sigure`
+  - Removes the artist "TK from Ling Tosite Sigure" from the list of artists to autoMute.
+  - Note that the artist name is case-sensitive, so it's recommended to copy and paste the text from the "Song Info" box.
+
 
 
 ### ex. /AMtoggle scriptEnabled
