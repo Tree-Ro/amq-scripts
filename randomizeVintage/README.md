@@ -1,4 +1,4 @@
-# Randomize Vintage Script for AMQ
+# Randomize Vintage Setting Script
 
 ## Description
 A script that randomizes the vintage setting in AMQ based on a specified interval, triggered after each quiz ends or when hosting a new quiz.
