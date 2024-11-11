@@ -7,6 +7,8 @@
 // @match        https://*.animemusicquiz.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=animemusicquiz.com/
 // @require      https://github.com/Minigamer42/scripts/raw/master/lib/commands.js
+// @downloadURL  https://github.com/Tree-Ro/amq-scripts/raw/main/randomizeVintage/randomizeVintage.user.js
+// @updateURL    https://github.com/Tree-Ro/amq-scripts/raw/main/randomizeVintage/randomizeVintage.user.js
 // @grant        none
 // ==/UserScript==
 
