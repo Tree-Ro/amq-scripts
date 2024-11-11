@@ -21,7 +21,7 @@
   const INTERVAL_SIZE_COMMAND = 'RVinterval'
 
   // Maximum allowed interval size for vintage years (e.g., max span of years)
-  const MAX_INTERVAL_SIZE = 100
+  const MAX_INTERVAL_SIZE = 50
 
   // ---------- The following section should not require modification ----------
 
