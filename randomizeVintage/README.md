@@ -1,7 +1,7 @@
 # Randomize Vintage Script for AMQ
 
 ## Description
-This Tampermonkey script randomizes the vintage year range in Anime Music Quiz (AMQ) based on a set interval.
+A Tampermonkey script randomizes the vintage year range in Anime Music Quiz (AMQ) based on a set interval.
 
 ## Commands
 - `RVtoggle`: Toggle the script on/off.
@@ -14,6 +14,7 @@ This Tampermonkey script randomizes the vintage year range in Anime Music Quiz (
 ## How It Works
 - The vintage setting is randomized after each quiz or when hosting a new game.
 - You can adjust the interval size using the `RVinterval` command.
+- You can configure the scripts commands and a few other things at the top of the script in its "configuration section"
 
 ## Installation
 1. Install Tampermonkey.
