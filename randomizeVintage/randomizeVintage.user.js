@@ -22,6 +22,9 @@
   // Command used to adjust the interval size for the vintage randomization
   const INTERVAL_SIZE_COMMAND = 'RVinterval'
 
+  // Command used to manually trigger a roll/random update of the year.
+  const MANUAL_ROLL_COMMAND = 'RVroll'
+
   // Maximum allowed interval size for vintage years (e.g., max span of years)
   const MAX_INTERVAL_SIZE = 50
 
@@ -38,15 +41,15 @@
   // Skip initialization if user is on the login page
   if (document.getElementById('lpLoginBox')) return;
 
-  // Initialize settings in localStorage if they don't exist
-  if (!localStorage.getItem(OPTIONS_KEY)) {
-    localStorage.setItem(OPTIONS_KEY, JSON.stringify({
-      isEnabled: false,       // Default state: script is disabled
-      intervalSize: 5,        // Default interval size: 5 years
-    }))
-  };
-
   function init() {
+    // Initialize settings in localStorage if they don't exist
+    if (!localStorage.getItem(OPTIONS_KEY)) {
+      localStorage.setItem(OPTIONS_KEY, JSON.stringify({
+        isEnabled: false,       // Default state: script is disabled
+        intervalSize: 5,        // Default interval size: 5 years
+      }))
+    };
+
     // Set up event listeners for the relevant game commands
     for (const command of COMMANDS_TO_TRIGGER_ON) {
       socket.addListerner(command, new Listener(command, updateGameYearInterval))
@@ -140,6 +143,11 @@
     command: INTERVAL_SIZE_COMMAND,
     callback: updateIntervalSize,
     description: "Adjusts the interval size for the random vintage year range."
+  })
+  AMQ_addCommand({
+    command: MANUAL_ROLL_COMMAND,
+    callback: updateGameYearInterval,
+    description: "Manually rerolls the interval for the year range."
   })
 
   // Initialize event listeners for relevant game events
