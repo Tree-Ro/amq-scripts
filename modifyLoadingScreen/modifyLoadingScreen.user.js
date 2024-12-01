@@ -4,8 +4,10 @@
 // @version      2024-12-01
 // @description  Removes or replaces the current loading screen of AMQ, currently not doing it very well... 
 // @author       Mooero
-// @match        https://animemusicquiz.com/
+// @match        https://*.animemusicquiz.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=animemusicquiz.com
+// @downloadURL  https://github.com/Tree-Ro/amq-scripts/raw/main/modifyLoadingScreen/modifyLoadingScreen.user.js
+// @updateURL    https://github.com/Tree-Ro/amq-scripts/raw/main/modifyLoadingScreen/modifyLoadingScreen.user.js
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
