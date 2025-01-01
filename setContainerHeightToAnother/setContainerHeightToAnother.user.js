@@ -3,6 +3,8 @@
 // @namespace    http://tampermonkey.net/
 // @version      1.0
 // @description  Set one element's max height relative to another element's max height during a game, default is to set the song info container to the height of the center container minus the title text above.
+// @updateURL    https://github.com/Tree-Ro/amq-scripts/raw/main/setContainerHeightToAnother/setContainerHeightToAnother.user.js
+// @downloadURL  https://github.com/Tree-Ro/amq-scripts/raw/main/setContainerHeightToAnother/setContainerHeightToAnother.user.js
 // @author       Mooero
 // @match        https://*.animemusicquiz.com/*
 // @grant        none
