@@ -16,7 +16,7 @@
     const BLUR_SUMMARY = true;             // Set to true to blur summary (unblur on hover)
     const BLUR_AMOUNT = 3;                 // Amount of blur in px (e.g. 5 for 'blur(5px)')
 
-    // AlwaysOn Mode: Show info during `answer results` (not guessing phase / `next song`), stays until next `answer results`. In other words the Info Box is always on.
+    // AlwaysOn Mode: Show info during `answer results`, stays until next `answer results`. In other words the Info Box is always on.
     // Best for ranked mode or when video is off (otherwise overlaps video).
     const ALWAYS_ON_TOGGLE_KEYBIND = { key: 'S', shift: true, ctrl: false, alt: false }; // Default Toggle: Shift+S.
 
