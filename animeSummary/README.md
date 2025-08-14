@@ -1,7 +1,7 @@
 # Anime Summary Userscript
 
 **Purpose:**  
-Displays the previous round’s anime summary and cover from AniList during the next guessing phase on [Anime Music Quiz](https://animemusicquiz.com/).
+Displays the round’s anime summary and cover from AniList.
 
 **Behavior:**  
 - Stores anime ID on the reveal of each rounds answer.  
