@@ -55,6 +55,7 @@
     let currentAnimeId = null;
     let lastDisplayNode = null;
     let hiddenElements = [];
+    let lastGamePhase = null; 
 
     function log(msg, ...args) {
         if (LOG_ENABLED) console.log(`[AnimeSummary] ${msg}`, ...args);
@@ -213,9 +214,11 @@
 
     // --- Remedies the current state of the info shown ---
     async function remedyAlwaysOnDisplay(isAlwaysOn) {
-        log('RemedyAlwaysOnDisplay called', { isAlwaysOn, currentAnimeId });
+        log('RemedyAlwaysOnDisplay called', { isAlwaysOn, currentAnimeId, lastGamePhase });
         if (!isAlwaysOn) {
-            hideAnimeInfo();
+            if (lastGamePhase === EVENT_NAMES.STORE) {
+                hideAnimeInfo();
+            }
             return;
         }
         if (!currentAnimeId) {
@@ -274,6 +277,7 @@
         // STORE: always store the anime ID, and if SHOW_ON_ANSWER_RESULTS, show info immediately
         socket.addListerner(EVENT_NAMES.STORE, new Listener(EVENT_NAMES.STORE, () => {
             setTimeout(() => {
+                lastGamePhase = EVENT_NAMES.STORE;
                 const id = extractAnimeId();
                 currentAnimeId = id || null;
                 log('answer result event, currentAnimeId set to', currentAnimeId);
@@ -296,6 +300,7 @@
 
         // SHOW: only show info if SHOW_ON_ANSWER_RESULTS is false
         socket.addListerner(EVENT_NAMES.SHOW, new Listener(EVENT_NAMES.SHOW, async () => {
+            lastGamePhase = EVENT_NAMES.SHOW;
             if (getAlwaysOnMode()) return;
             log('play next song event triggered');
             if (!currentAnimeId) { log('No currentAnimeId'); return; }
@@ -316,6 +321,7 @@
         // HIDE: always hide info
         socket.addListerner(EVENT_NAMES.HIDE, new Listener(EVENT_NAMES.HIDE, () => {
             setTimeout(() => {
+                lastGamePhase = EVENT_NAMES.HIDE;
                 log('guess phase over event triggered');
                 hideAnimeInfo();
             }, 100)
