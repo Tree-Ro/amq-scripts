@@ -101,22 +101,6 @@
         }
     }
 
-    // --- Keybind Handler ---
-    document.addEventListener('keydown', function(e) {
-        if (
-            e.key.toUpperCase() === ALWAYS_ON_TOGGLE_KEYBIND.key.toUpperCase() &&
-            !!e.shiftKey === !!ALWAYS_ON_TOGGLE_KEYBIND.shift &&
-            !!e.ctrlKey === !!ALWAYS_ON_TOGGLE_KEYBIND.ctrl &&
-            !!e.altKey === !!ALWAYS_ON_TOGGLE_KEYBIND.alt &&
-            !e.repeat
-        ) {
-            const newVal = !getAlwaysOnMode();
-            setAlwaysOnMode(newVal);
-            showToggleNotification(newVal);
-            e.preventDefault();
-        }
-    });
-
     // --- AniList Fetching GraphQl o_o ---
     async function fetchAnimeInfo(id) {
         const now = Date.now();
@@ -210,6 +194,7 @@
         return { box, summaryId };
     }
 
+    // --- Setup Blur Events ---
     function setupBlurEvents(summaryId) {
         if (BLUR_SUMMARY) {
             setTimeout(() => {
@@ -226,6 +211,34 @@
         }
     }
 
+    // --- Remedies the current state of the info shown ---
+    async function remedyAlwaysOnDisplay(isAlwaysOn) {
+        log('RemedyAlwaysOnDisplay called', { isAlwaysOn, currentAnimeId });
+        if (!isAlwaysOn) {
+            hideAnimeInfo();
+            return;
+        }
+        if (!currentAnimeId) {
+            hideAnimeInfo();
+            return;
+        }
+        let cache = getCache();
+        let info = cache[currentAnimeId];
+        if (info) {
+            showAnimeInfo(info);
+            return;
+        }
+        info = await fetchAnimeInfo(currentAnimeId);
+        if (info) {
+            cache[currentAnimeId] = info;
+            setCache(cache);
+            showAnimeInfo(info);
+        } else {
+            hideAnimeInfo();
+        }
+    }
+
+    // --- guess what this one does! ---
     function showAnimeInfo(info) {
         const parent = document.querySelector('#qpVideoOverflowContainer');
         if (!parent) { log('Parent container not found'); return; }
@@ -238,6 +251,7 @@
         lastDisplayNode = box;
     }
 
+    // --- Hide Anime Info ---
     function hideAnimeInfo() {
         if (lastDisplayNode && lastDisplayNode.parentNode) {
             lastDisplayNode.remove();
@@ -308,10 +322,36 @@
         }));
     }
 
+    // --- Setup Keybind Handler(s) ---
+    function setupKeybindHandler() {
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key.toUpperCase() === ALWAYS_ON_TOGGLE_KEYBIND.key.toUpperCase() &&
+                !!e.shiftKey === !!ALWAYS_ON_TOGGLE_KEYBIND.shift &&
+                !!e.ctrlKey === !!ALWAYS_ON_TOGGLE_KEYBIND.ctrl &&
+                !!e.altKey === !!ALWAYS_ON_TOGGLE_KEYBIND.alt &&
+                !e.repeat
+            ) {
+                e.preventDefault();
+                const isAlwaysOn = !getAlwaysOnMode();
+                setAlwaysOnMode(isAlwaysOn);
+                log('AlwaysOn Mode toggled', isAlwaysOn ? 'ON' : 'OFF');
+                showToggleNotification(isAlwaysOn);
+                remedyAlwaysOnDisplay(isAlwaysOn);
+            }
+        });
+    }
+
     // --- Wait for AMQ socket ---
     function waitForAMQ() {
-        if (typeof socket !== 'undefined' && typeof Listener !== 'undefined') { log('AMQ ready'); setupSocketHooks(); }
-        else { log('Waiting for AMQ...'); setTimeout(waitForAMQ, 1000); }
+        if (typeof socket !== 'undefined' && typeof Listener !== 'undefined') {
+            log('AMQ ready');
+            setupSocketHooks();
+            setupKeybindHandler();
+        } else {
+            log('Waiting for AMQ...');
+            setTimeout(waitForAMQ, 1000);
+        }
     }
     waitForAMQ();
 })();
