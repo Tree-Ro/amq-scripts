@@ -5,6 +5,8 @@
 // @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it. 
 // @author       Mooero
 // @match        https://animemusicquiz.com/*
+// @downloadURL  https://github.com/Tree-Ro/amq-scripts/raw/main/animeSummary/animeSummary.user.js
+// @updateURL    https://github.com/Tree-Ro/amq-scripts/raw/main/animeSummary/animeSummary.user.js
 // @grant        none
 // ==/UserScript==
 
