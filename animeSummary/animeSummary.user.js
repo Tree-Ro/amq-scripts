@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Anime Summary
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it. 
 // @author       Mooero
 // @match        https://animemusicquiz.com/*
@@ -22,9 +22,13 @@
     // Best for ranked mode or when video is off (otherwise overlaps video).
     const ALWAYS_ON_TOGGLE_KEYBIND = { key: 'S', shift: true, ctrl: false, alt: false }; // Default Toggle: Shift+S.
 
+
     const LOG_ENABLED = false;              // Set to true to enable logging
     const ANILIST_API_LIMIT = 20;           // Shouldn't be an issue unless you spam vote skip instantly or play 1sec guess phases etc..
-    // requests per minute https://docs.anilist.co/guide/rate-limiting.
+                                            // requests per minute https://docs.anilist.co/guide/rate-limiting.
+                                            
+    const CACHE_MAX_ENTRIES = 800;          // Entries from Anilist are cached in localStorage to lessen the load on the API.
+                                            // 800 Entries will be about 1MiB~ of your total 5MiB localStorage quota. Reduce this if you have other scripts that use a lot of space. 
 
     // My CSS skills are def supbar so this is a reminder that you can update the CSS styles below to customize the appearance of the anime info box.
     // Definitely expecting it to break on different screen sizes etc. from my own. 
@@ -35,6 +39,7 @@
 
     // --- Internal Constants (not recommended to change) ---
     const CACHE_KEY = 'AnimeSummary_Cache';
+    const CACHE_LRU_KEY = 'AnimeSummary_CacheLRU';
     const ALWAYS_ON_MODE_KEY = 'AnimeSummary_AlwaysOn';
     const ALWAYS_ON_MODE_DEFAULT = false;
     const API_URL = 'https://graphql.anilist.co';
@@ -65,16 +70,77 @@
     function getCache() {
         try {
             const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
-            log('Cache retrieved', cache);
+            let lru = JSON.parse(localStorage.getItem(CACHE_LRU_KEY) || '[]');
+            if (!Array.isArray(lru)) lru = [];
+            cache._lru = lru;
             return cache;
         } catch (e) {
             log('Cache parse failed', e);
-            return {};
+            return { _lru: [] };
         }
     }
+
+    // Trims and sets the cache in localStorage
     function setCache(cache) {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-        log('Cache updated', cache);
+        let lru = cache._lru || [];
+        delete cache._lru;
+        let safety = 0;
+        let reset = false;
+
+        if (lru.length !== Object.keys(cache).length) {
+            log('LRU length mismatch, resetting cache');
+            reset = true;
+        }
+
+        while (Object.keys(cache).length > CACHE_MAX_ENTRIES && reset === false) {
+            // Remove the oldest entry from cache and LRU
+            const oldest = lru.shift();
+            if (oldest && cache.hasOwnProperty(oldest)) {
+                delete cache[oldest];
+                log('Deleting oldest cache entry', oldest);
+            }
+           
+            if (++safety > CACHE_MAX_ENTRIES + 10) {
+                log('Safety break in setCache: possible infinite loop. Resetting cache.');
+                reset = true;
+                break;
+            }
+        }
+        // Safeguard: Reset both caches since there is likely inconsistent state issues
+        if (reset) {
+            localStorage.setItem(CACHE_KEY, '{}');
+            localStorage.setItem(CACHE_LRU_KEY, '[]');
+        } else {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+            localStorage.setItem(CACHE_LRU_KEY, JSON.stringify(lru));
+        }
+    }
+
+    // --- LRU Cache Helpers ---
+    function getFromCache(animeId) {
+        const cache = getCache();
+        const info = cache[animeId];
+        if (info) {
+            touchCacheEntry(animeId, cache);
+            setCache(cache);
+        }
+        return info;
+    }
+
+    // Set anime info in cache, updating the LRU list
+    function setInCache(animeId, info) {
+        const cache = getCache();
+        cache[animeId] = info;
+        touchCacheEntry(animeId, cache);
+        setCache(cache);
+    }
+
+    // Touch the cache entry to mark it as recently used
+    function touchCacheEntry(animeId, cache) {
+        let lru = cache._lru || [];
+        lru = lru.filter(k => k !== animeId);
+        lru.push(animeId);
+        cache._lru = lru;
     }
 
     // --- Extract anime ID from #qpAnimeLink ---
@@ -88,7 +154,7 @@
         return id;
     }
 
-        // --- AlwaysOn Mode Helpers ---
+    // --- AlwaysOn Mode Helpers ---
     function getAlwaysOnMode() {
         const val = localStorage.getItem(ALWAYS_ON_MODE_KEY);
         return val === null ? ALWAYS_ON_MODE_DEFAULT : val === 'true';
@@ -132,7 +198,7 @@
         }
     }
 
-    // --- Display ---
+    // Clean up 1
     function removePreviousAnimeInfoBox() {
         if (lastDisplayNode && lastDisplayNode.parentNode) {
             lastDisplayNode.remove();
@@ -141,6 +207,7 @@
         }
     }
 
+    // Clean up 2
     function hideConfiguredElements() {
         hiddenElements = [];
         for (const selector of HIDE_ON_INFO_SELECTORS) {
@@ -225,16 +292,14 @@
             hideAnimeInfo();
             return;
         }
-        let cache = getCache();
-        let info = cache[currentAnimeId];
+        let info = getFromCache(currentAnimeId);
         if (info) {
             showAnimeInfo(info);
             return;
         }
         info = await fetchAnimeInfo(currentAnimeId);
         if (info) {
-            cache[currentAnimeId] = info;
-            setCache(cache);
+            setInCache(currentAnimeId, info);
             showAnimeInfo(info);
         } else {
             hideAnimeInfo();
@@ -283,13 +348,13 @@
                 log('answer result event, currentAnimeId set to', currentAnimeId);
                 if (getAlwaysOnMode() && currentAnimeId) {
                     (async () => {
-                        let cache = getCache();
-                        let info = cache[currentAnimeId];
-                        if (info) log('Cache hit for', currentAnimeId);
-                        else {
+                        let info = getFromCache(currentAnimeId);
+                        if (!info) {
                             log('Cache miss for', currentAnimeId, '- fetching');
                             info = await fetchAnimeInfo(currentAnimeId);
-                            if (info) { cache[currentAnimeId] = info; setCache(cache); }
+                            if (info) setInCache(currentAnimeId, info);
+                        } else {
+                            log('Cache hit for', currentAnimeId);
                         }
                         if (info) showAnimeInfo(info);
                         else hideAnimeInfo();
@@ -304,13 +369,13 @@
             if (getAlwaysOnMode()) return;
             log('play next song event triggered');
             if (!currentAnimeId) { log('No currentAnimeId'); return; }
-            let cache = getCache();
-            let info = cache[currentAnimeId];
-            if (info) log('Cache hit for', currentAnimeId);
-            else {
+            let info = getFromCache(currentAnimeId);
+            if (!info) {
                 log('Cache miss for', currentAnimeId, '- fetching');
                 info = await fetchAnimeInfo(currentAnimeId);
-                if (info) { cache[currentAnimeId] = info; setCache(cache); }
+                if (info) setInCache(currentAnimeId, info);
+            } else {
+                log('Cache hit for', currentAnimeId);
             }
             setTimeout(() => {
                 if (info) showAnimeInfo(info);
