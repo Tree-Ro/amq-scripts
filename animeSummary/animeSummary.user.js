@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Anime Summary
 // @namespace    http://tampermonkey.net/
-// @version      1.31
+// @version      1.32
 // @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it. 
 // @author       Mooero
 // @match        https://animemusicquiz.com/*
@@ -41,7 +41,6 @@
     const CACHE_KEY = 'AnimeSummary_Cache';
     const CACHE_LRU_KEY = 'AnimeSummary_CacheLRU';
     const ALWAYS_ON_MODE_KEY = 'AnimeSummary_AlwaysOn';
-    const ANILIST_LINK_SELECTOR = '#qpAnimeLink'; // Selector for the anime link with a valid anilist.co/anime/ID href
     const CONTAINER_SELECTOR = '#qpVideoOverflowContainer'; // Container where the anime info box will be appended
     const ALWAYS_ON_MODE_DEFAULT = false;
     const API_URL = 'https://graphql.anilist.co';
@@ -145,15 +144,17 @@
         cache._lru = lru;
     }
 
-    // --- Extract anime ID from ANILIST_LINK_SELECTOR ---
-    function extractAnimeId() {
-        const link = document.querySelector(ANILIST_LINK_SELECTOR);
-        if (!link) { log('Anime link not found'); return null; }
-        if (!link.href) { log('Anime link missing href'); return null; }
-        const match = link.href.match(/anilist.co\/anime\/(\d+)/);
-        const id = match ? match[1] : null;
-        log('Extracted anime ID', id, 'from', link.href);
-        return id;
+    // --- Extract anime ID from event data ---
+    function extractAnimeId(eventData) {
+        const idFromEventData = eventData?.songInfo?.siteIds?.aniListId;
+        if (idFromEventData) return idFromEventData;
+
+        // Backup: scan DOM for AniList links
+        log('No ID in event data, scanning DOM for AniList links');
+        const link = Array.from(document.querySelectorAll('a[href*="anilist.co/anime/"]'))
+                        .map(a => a.href.match(/anilist\.co\/anime\/(\d+)/))
+                        .find(m => m);
+        return link ? link[1] : null;
     }
 
     // --- AlwaysOn Mode Helpers ---
@@ -342,11 +343,10 @@
         log('Setting up socket hooks');
 
         // STORE: always store the anime ID, and if SHOW_ON_ANSWER_RESULTS, show info immediately
-        socket.addListerner(EVENT_NAMES.STORE, new Listener(EVENT_NAMES.STORE, () => {
+        socket.addListerner(EVENT_NAMES.STORE, new Listener(EVENT_NAMES.STORE, (data) => {
             setTimeout(() => {
                 lastGamePhase = EVENT_NAMES.STORE;
-                const id = extractAnimeId();
-                currentAnimeId = id || null;
+                currentAnimeId = extractAnimeId(data);
                 log('answer result event, currentAnimeId set to', currentAnimeId);
                 if (getAlwaysOnMode() && currentAnimeId) {
                     (async () => {
