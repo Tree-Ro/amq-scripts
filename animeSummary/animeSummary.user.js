@@ -26,7 +26,7 @@
     const LOG_ENABLED = false;              // Set to true to enable logging
     const ANILIST_API_LIMIT = 20;           // Shouldn't be an issue unless you spam vote skip instantly or play 1sec guess phases etc..
                                             // requests per minute https://docs.anilist.co/guide/rate-limiting.
-                                            
+
     const CACHE_MAX_ENTRIES = 800;          // Entries from Anilist are cached in localStorage to lessen the load on the API.
                                             // 800 Entries will be about 1MiB~ of your total 5MiB localStorage quota. Reduce this if you have other scripts that use a lot of space. 
 
@@ -41,6 +41,8 @@
     const CACHE_KEY = 'AnimeSummary_Cache';
     const CACHE_LRU_KEY = 'AnimeSummary_CacheLRU';
     const ALWAYS_ON_MODE_KEY = 'AnimeSummary_AlwaysOn';
+    const ANILIST_LINK_SELECTOR = '#qpAnimeLink'; // Selector for the anime link with a valid anilist.co/anime/ID href
+    const CONTAINER_SELECTOR = '#qpVideoOverflowContainer'; // Container where the anime info box will be appended
     const ALWAYS_ON_MODE_DEFAULT = false;
     const API_URL = 'https://graphql.anilist.co';
     const HIDE_ON_INFO_SELECTORS = [    // Elements that will be hidden when anime info is displayed
@@ -143,9 +145,9 @@
         cache._lru = lru;
     }
 
-    // --- Extract anime ID from #qpAnimeLink ---
+    // --- Extract anime ID from ANILIST_LINK_SELECTOR ---
     function extractAnimeId() {
-        const link = document.querySelector('#qpAnimeLink');
+        const link = document.querySelector(ANILIST_LINK_SELECTOR);
         if (!link) { log('Anime link not found'); return null; }
         if (!link.href) { log('Anime link missing href'); return null; }
         const match = link.href.match(/anilist.co\/anime\/(\d+)/);
@@ -308,7 +310,7 @@
 
     // --- guess what this one does! ---
     function showAnimeInfo(info) {
-        const parent = document.querySelector('#qpVideoOverflowContainer');
+        const parent = document.querySelector(CONTAINER_SELECTOR);
         if (!parent) { log('Parent container not found'); return; }
         removePreviousAnimeInfoBox();
         hideConfiguredElements();
