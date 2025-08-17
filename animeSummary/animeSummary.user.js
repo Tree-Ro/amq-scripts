@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Anime Summary
 // @namespace    http://tampermonkey.net/
-// @version      1.34
+// @version      1.35
 // @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it.
 // @author       Mooero
 // @match        https://animemusicquiz.com/*
@@ -21,7 +21,7 @@
 
     // AlwaysOn Mode: Show info during `answer results`, stays until next `answer results`. In other words the Info Box is always on.
     // Best for ranked mode or when video is off (otherwise overlaps video).
-    const ALWAYS_ON_TOGGLE_KEYBIND = { key: 'S', shift: true, ctrl: true, alt: false }; // Default Toggle: Ctrl+Shift+S.
+    const ALWAYS_ON_TOGGLE_KEYBIND = { key: 'S', shift: false, ctrl: true, alt: true }; // Default Toggle: Ctrl+Alt+S.
 
 
     const LOG_ENABLED = false;              // Set to true to enable logging
