@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Anime Summary
 // @namespace    http://tampermonkey.net/
-// @version      1.33
+// @version      1.34
 // @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it.
 // @author       Mooero
 // @match        https://animemusicquiz.com/*
