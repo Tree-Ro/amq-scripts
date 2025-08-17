@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Anime Summary
 // @namespace    http://tampermonkey.net/
-// @version      1.32
-// @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it. 
+// @version      1.33
+// @description  A kinda customisable userscript querying anilist for summary + cover of the previous rounds anime and then display it.
 // @author       Mooero
 // @match        https://animemusicquiz.com/*
 // @downloadURL  https://github.com/Tree-Ro/amq-scripts/raw/main/animeSummary/animeSummary.user.js
@@ -28,10 +28,10 @@
                                             // requests per minute https://docs.anilist.co/guide/rate-limiting.
 
     const CACHE_MAX_ENTRIES = 800;          // Entries from Anilist are cached in localStorage to lessen the load on the API.
-                                            // 800 Entries will be about 1MiB~ of your total 5MiB localStorage quota. Reduce this if you have other scripts that use a lot of space. 
+                                            // 800 Entries will be about 1MiB~ of your total 5MiB localStorage quota. Reduce this if you have other scripts that use a lot of space.
 
     // My CSS skills are def supbar so this is a reminder that you can update the CSS styles below to customize the appearance of the anime info box.
-    // Definitely expecting it to break on different screen sizes etc. from my own. 
+    // Definitely expecting it to break on different screen sizes etc. from my own.
     // --- End of User Config (safe to change) ---
 
 
@@ -228,7 +228,6 @@
         box.style.position = 'absolute';
         box.style.top = '50%';
         box.style.left = '50%';
-        box.style.transform = 'translate(-50%, -50%)';
         box.style.display = 'flex';
         box.style.alignItems = 'flex-start';
         box.style.gap = '16px';
@@ -236,7 +235,8 @@
         box.style.padding = '12px';
         box.style.borderRadius = '8px';
         box.style.margin = '8px 0';
-        box.style.maxWidth = '600px';
+        box.style.inset = '10% 5%';
+        box.style.display = 'flex';
         box.style.fontSize = '15px';
         box.style.zIndex = '2147483647';
 
@@ -244,21 +244,40 @@
         const img = document.createElement('img');
         img.src = info.coverImage?.large || '';
         img.alt = 'Cover';
-        img.style.width = '140px';
-        img.style.height = 'fit-content';
+        img.style.flex = '2'
+        img.style.height = '100%';
         img.style.objectFit = 'cover';
         img.style.borderRadius = '5px';
 
         // Text
         const text = document.createElement('div');
+        text.style.flex = '5';
         let title = 'Unknown';
         if (TITLE_PREFERENCE === 'native') title = info.title?.native || info.title?.english || info.title?.romaji || 'ERROR: Unknown';
         else if (TITLE_PREFERENCE === 'romaji') title = info.title?.romaji || info.title?.english || info.title?.native || 'ERROR: Unknown';
         else title = info.title?.english || info.title?.romaji || info.title?.native || 'ERROR: Unknown';
+        
         const summaryId = 'amqAnimeSummaryText';
-        let summaryStyle = 'margin-top:6px;max-height:150px;min-width:385px;overflow:auto;';
-        if (BLUR_SUMMARY) summaryStyle += `filter:blur(${BLUR_AMOUNT}px);transition:filter 0.2s;cursor:pointer;`;
-        text.innerHTML = `<b style=\"font-size:1.1em;\">${title}</b><br><div id=\"${summaryId}\" style=\"${summaryStyle}\">${info.description || 'No summary available.'}</div>`;
+        const titleEl = document.createElement('b');
+        titleEl.style.fontSize = '1.1em';
+        titleEl.textContent = title;
+
+        const summaryEl = document.createElement('div');
+        summaryEl.id = summaryId;
+        summaryEl.style.marginTop = '6px';
+        summaryEl.style.maxHeight = '25vh';
+        summaryEl.style.overflow = 'auto';
+        if (BLUR_SUMMARY) {
+            summaryEl.style.filter = `blur(${BLUR_AMOUNT}px)`;
+            summaryEl.style.transition = 'filter 0.2s';
+            summaryEl.style.cursor = 'pointer';
+        }
+        summaryEl.innerHTML = info.description || 'No summary available.';
+
+        text.appendChild(titleEl);
+        text.appendChild(summaryEl);
+
+
 
         box.appendChild(img);
         box.appendChild(text);
