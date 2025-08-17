@@ -17,10 +17,11 @@
     const TITLE_PREFERENCE = 'romaji';     // 'native', 'romaji', or 'english'
     const BLUR_SUMMARY = true;             // Set to true to blur summary (unblur on hover)
     const BLUR_AMOUNT = 3;                 // Amount of blur in px (e.g. 5 for 'blur(5px)')
+    const HIDE_SCROLLBAR = true            // Hides scrollbar of summary if applicable
 
     // AlwaysOn Mode: Show info during `answer results`, stays until next `answer results`. In other words the Info Box is always on.
     // Best for ranked mode or when video is off (otherwise overlaps video).
-    const ALWAYS_ON_TOGGLE_KEYBIND = { key: 'S', shift: true, ctrl: false, alt: false }; // Default Toggle: Shift+S.
+    const ALWAYS_ON_TOGGLE_KEYBIND = { key: 'S', shift: true, ctrl: true, alt: false }; // Default Toggle: Ctrl+Shift+S.
 
 
     const LOG_ENABLED = false;              // Set to true to enable logging
@@ -263,6 +264,10 @@
         titleEl.textContent = title;
 
         const summaryEl = document.createElement('div');
+        summaryEl.addEventListener('wheel', e => {
+            e.stopPropagation();
+        }, true)
+
         summaryEl.id = summaryId;
         summaryEl.style.marginTop = '6px';
         summaryEl.style.maxHeight = '25vh';
@@ -271,6 +276,9 @@
             summaryEl.style.filter = `blur(${BLUR_AMOUNT}px)`;
             summaryEl.style.transition = 'filter 0.2s';
             summaryEl.style.cursor = 'pointer';
+        }
+        if (HIDE_SCROLLBAR) {
+            summaryEl.style.scrollbarWidth = 'none';
         }
         summaryEl.innerHTML = info.description || 'No summary available.';
 
